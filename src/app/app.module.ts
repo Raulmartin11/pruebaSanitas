@@ -1,24 +1,30 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserModule } from '@angular/platform-browser';
-import { MatTableModule } from '@angular/material/table';
-import { MaterialModule } from 'src/material.module';
-import { CTableComponent } from 'src/components/c-table/c-table.component';
-import { DataService } from 'src/services/data.service';
-import { CTableModule } from 'src/components/c-table/c-table.module';
+import { MaterialModule } from '../material.module';
+import { DataService } from '../app/services/data.service';
+import { VHomeModule } from '../app/view/v-home/v-home.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CTableModule } from './components/c-table/c-table.module';
+import { CToolbarModule } from './components/c-toolbar/c-toolbar.module';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     MaterialModule,
-    CTableModule
+    CTableModule,
+    CToolbarModule,
+    VHomeModule,
+    BrowserAnimationsModule
   ],
   providers: [DataService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppModule { }

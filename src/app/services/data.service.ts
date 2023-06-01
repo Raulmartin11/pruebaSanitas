@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { loremIpsum } from "lorem-ipsum";
 import { Observable, concatMap, map, mergeMap, of, range, take, tap, toArray } from "rxjs";
-import { PhotoData } from "src/models/photo.model";
+import { PhotoData } from "src/app/models/photo.model";
 
 @Injectable()
 export class DataService {
@@ -12,13 +12,8 @@ export class DataService {
     private jsonData: PhotoData[] = [];
     constructor(private http: HttpClient) {}
 
-    getData() {
-        this.http.get<PhotoData[]>('./assets/photoData.json').pipe(
-            map(data => {
-                console.log('Datos obtenidos:', data);
-            }) 
-        );
-        
+    getData(): Observable<PhotoData[]> {
+        return this.http.get<PhotoData[]>('./assets/photoData.json');
     }
 
 
