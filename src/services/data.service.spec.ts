@@ -5,7 +5,7 @@ import { DataService } from './data.service';
 
 
 describe('DataService', () => {
-  let service = DataService;
+  let service: DataService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -1,23 +1,58 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { concatMap, range, toArray } from "rxjs";
+import { loremIpsum } from "lorem-ipsum";
+import { Observable, concatMap, map, mergeMap, of, range, take, tap, toArray } from "rxjs";
+import { PhotoData } from "src/models/photo.model";
 
 @Injectable()
 export class DataService {
-    private url = 'https://i.picsum.photos/id'
+    private url = 'https://picsum.photos/id'
     private currentData = 20;
+    private currentID = 1
+    private jsonData: PhotoData[] = [];
     constructor(private http: HttpClient) {}
 
     getData() {
-        const _range = range(1, 4000).pipe(
-            concatMap(number => this.http.get(`${this.url}/${number}/500/500.jpg`)),
-            toArray()
-          );
-
-        _range.subscribe((response) => {
-            console.log(response);
-            return response
-        });
+        this.http.get<PhotoData[]>('./assets/photoData.json').pipe(
+            map(data => {
+                console.log('Datos obtenidos:', data);
+            }) 
+        );
         
     }
+
+
+    private generateUniqueId() {
+        return this.currentID++;
+    }
+
+    private generateRandomPhotoUrl(id: number) {
+        return `${this.url}/${id}/500/500.jpg`;
+    }
+
+    private generateRandomObject(): any {
+        const id = this.generateUniqueId();
+        const photo = this.generateRandomPhotoUrl(id);
+        const text = loremIpsum({ count: 1, units: 'paragraphs' });
+
+        const obj: PhotoData = {
+            id: id,
+            photo: photo,
+            text: text
+        };
+
+        return obj;
+    }
+
+    generateRandomArray(): any {
+        const jsonArray: PhotoData[] = [];
+
+        for (let i = 0; i < 4000; i++) {
+        const obj: PhotoData = this.generateRandomObject();
+        jsonArray.push(obj);
+        }
+
+        return JSON.stringify(jsonArray);
+    }
+      
 }

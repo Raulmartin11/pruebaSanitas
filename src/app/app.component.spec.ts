@@ -5,7 +5,7 @@ import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from "@ang
 
 
 describe('AppComponent', () => {
-  let component = AppComponent;
+  let component: AppComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
