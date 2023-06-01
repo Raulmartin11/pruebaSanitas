@@ -22,15 +22,17 @@ const ELEMENT_DATA: PeriodicElement[] = [
   {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
 ];
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: 'c-table',
+  templateUrl: './c-table.component.html',
+  styleUrls: ['./c-table.component.scss'],
 })
-export class AppComponent {
+export class CTableComponent {
   dataSource = ELEMENT_DATA;
   displayedColumns: string[] = Object.keys(this.dataSource[0]);
+
   constructor(private dataService: DataService) {
     this.dataService.getData()
   }
-}
 
+
+}

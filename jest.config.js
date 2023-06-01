@@ -3,11 +3,9 @@ module.exports = {
     "setupFilesAfterEnv": [
         "<rootDir>/setup-jest.ts"
     ],
-    "transformIgnorePatterns": [
-        "node_modules/(?!@ngrx|ngx-socket-io)" // List any packages here that error
-    ],
+    "transformIgnorePatterns": ['node_modules/(?!@angular|@ngx-translate)'],
     "transform": {
-        "^.+\\.(ts|js|html)$": "ts-jest"
+        '^.+\\.(ts|js|html)$': 'jest-preset-angular'
     },
     "testPathIgnorePatterns": [
         "<rootDir>/node_modules/",
