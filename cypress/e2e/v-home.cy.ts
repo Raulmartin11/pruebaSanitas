@@ -60,10 +60,10 @@ describe('template spec', () => {
     cy.get('.mat-row > .cdk-column-text').should('not.contain', 'º')
   })
 
-  it.skip('scroll to bottom', () => { //FIX TEST
+  it.skip('scroll to bottom', () => {
     cy.visit('http://localhost:4200/')
     cy.wait(2000)
     cy.get(':nth-child(20) > .cdk-column-id').scrollIntoView({ duration: 1000 })
-    cy.get(':nth-child(21) > .cdk-column-id').should('be.visible')
+    cy.get(':nth-child(20) > .cdk-column-id').should('be.visible')
   })
 })

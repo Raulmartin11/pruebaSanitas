@@ -26,9 +26,4 @@ describe('DataService', () => {
         expect(data[0].text).toBeDefined();
     });
   });
-
-  it("test_generate_random_object_generates_valid_text", () => {
-    const obj = service.generateRandomObject();
-    expect(obj.id).toBe(1);
-  });
 });

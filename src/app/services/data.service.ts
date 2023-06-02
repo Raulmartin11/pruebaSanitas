@@ -25,7 +25,7 @@ export class DataService {
         return `${this.url}/${id}/500/500.jpg`;
     }
 
-    generateRandomObject(): any {
+    private generateRandomObject(): PhotoData {
         const id = this.generateUniqueId();
         const photo = this.generateRandomPhotoUrl(id);
         const text = loremIpsum({ count: 1, units: 'paragraphs' });
@@ -39,7 +39,7 @@ export class DataService {
         return obj;
     }
 
-    generateRandomArray(): any {
+    generateRandomArray(): string {
         const jsonArray: PhotoData[] = [];
 
         for (let i = 0; i < 4000; i++) {
