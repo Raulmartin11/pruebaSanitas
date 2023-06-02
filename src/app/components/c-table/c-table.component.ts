@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Observable, debounceTime, distinctUntilChanged, filter, fromEvent, map, switchMap, tap } from 'rxjs';
+import { Observable, Subject, debounceTime, distinctUntilChanged, filter, fromEvent, map, switchMap, takeUntil, tap } from 'rxjs';
 import { PhotoData } from '../../models/photo.model';
 import { DataService } from '../../services/data.service';
 
@@ -9,13 +9,13 @@ import { DataService } from '../../services/data.service';
   templateUrl: './c-table.component.html',
   styleUrls: ['./c-table.component.scss'],
 })
-export class CTableComponent implements OnInit {
+export class CTableComponent implements OnInit, OnDestroy {
   jsonArray$!: Observable<PhotoData[]>;
   dataSource!: MatTableDataSource<PhotoData>;
   displayedColumns!: string[];
   totalData = 20;
+  destroy$ = new Subject<void>();
 
-  @ViewChild('scrollable') scrollable!: ElementRef;
   constructor(private dataService: DataService) {}
 
   ngOnInit() {
@@ -24,15 +24,16 @@ export class CTableComponent implements OnInit {
 
   getData() {
     this.jsonArray$ = this.dataService.getData();
-    this.jsonArray$.subscribe((response: PhotoData[]) => {
+    this.jsonArray$.pipe(takeUntil(this.destroy$),).subscribe((response: PhotoData[]) => {
       this.dataSource = new MatTableDataSource(response.slice(0,this.totalData))
       this.displayedColumns = Object.keys(response[0])
-    }).unsubscribe()
+    })
   }
   
   ngAfterViewInit() {
     fromEvent(window, 'scroll')
     .pipe(
+      takeUntil(this.destroy$),
       debounceTime(200),
       distinctUntilChanged(),
     )
@@ -46,6 +47,7 @@ export class CTableComponent implements OnInit {
   filterAndPaginate() {
     fromEvent(window, 'scroll')
     .pipe(
+      takeUntil(this.destroy$),
       filter(() => {
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
@@ -64,14 +66,19 @@ export class CTableComponent implements OnInit {
     const filter = (event?.target as HTMLInputElement).value.trim();
     if(filter) {
       this.jsonArray$.pipe(
+        takeUntil(this.destroy$),
         debounceTime(300),
         distinctUntilChanged(),
         map((obj: PhotoData[]) => 
             obj.filter(object => object.id.toString().trim() === filter || object.text.trim().includes(filter)))
-      ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData))).unsubscribe()
+      ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData)))
     } else {
       this.getData()
     }
   }
   
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }
