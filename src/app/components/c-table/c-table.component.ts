@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { MatSort } from '@angular/material/sort';
-import {MatTableDataSource, MatTableModule} from '@angular/material/table';
-import { Observable, debounceTime, distinctUntilChanged, filter, first, fromEvent, map, take } from 'rxjs';
+import { MatTableDataSource } from '@angular/material/table';
+import { Observable, debounceTime, distinctUntilChanged, filter, fromEvent, map, switchMap, tap } from 'rxjs';
 import { PhotoData } from '../../models/photo.model';
 import { DataService } from '../../services/data.service';
 
@@ -13,58 +12,65 @@ import { DataService } from '../../services/data.service';
 export class CTableComponent implements OnInit {
   jsonArray$!: Observable<PhotoData[]>;
   dataSource!: MatTableDataSource<PhotoData>;
-  displayedColumns: string[] = [];
-  isLoading = false;
-  observer: IntersectionObserver;
+  displayedColumns!: string[];
+  totalData = 20;
+
+  @ViewChild('scrollable') scrollable!: ElementRef;
   constructor(private dataService: DataService) {}
-  
-  @ViewChild('tableContainer', { static: true }) tableContainer!: ElementRef;
 
   ngOnInit() {
+    this.getData();
+  }
+
+  getData() {
     this.jsonArray$ = this.dataService.getData();
     this.jsonArray$.subscribe((response: PhotoData[]) => {
-      console.log(response.slice(0,20));
-      
-      this.dataSource = new MatTableDataSource(response.slice(0,20))
+      this.dataSource = new MatTableDataSource(response.slice(0,this.totalData))
       this.displayedColumns = Object.keys(response[0])
     })
-    
-    const scroll$ = fromEvent(this.tableContainer.nativeElement, 'scroll').pipe(
-      map((event: any) => event.target),
-      filter(({ scrollHeight, scrollTop, clientHeight }) => scrollHeight - scrollTop === clientHeight),
+  }
+  
+  ngAfterViewInit() {
+    fromEvent(window, 'scroll')
+    .pipe(
       debounceTime(200),
-      distinctUntilChanged()
-    );
-
-    // Cargar más datos cuando se hace scroll
-    scroll$.subscribe(() => {
-      this.isLoading = true;
-      this.loadMoreData().then((newData: any[]) => {
-        console.log('1');
-        
-        const currentData = this.dataSource.data;
-        this.dataSource.data = [...currentData, ...newData];
-        this.isLoading = false;
-      });
+      distinctUntilChanged(),
+    )
+    .subscribe(() => {
+      this.totalData += 5;
+      this.filterAndPaginate();
     });
   }
 
-  loadMoreData(): Promise<any[]> {
-    // Simulación de carga de datos
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const newData = Array.from({ length: 10 }, (_, index) => ({
-          id: this.dataSource.data.length + index + 1,
-          name: `User ${this.dataSource.data.length + index + 1}`,
-          email: `user${this.dataSource.data.length + index + 1}@example.com`
-        }));
-        resolve(newData);
-      }, 1500);
+
+  filterAndPaginate() {
+    fromEvent(window, 'scroll')
+    .pipe(
+      filter(() => {
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const scrollPosition = windowHeight + scrollTop;
+        return scrollPosition >= documentHeight;
+      }),
+      switchMap(() => this.jsonArray$)
+    )
+    .subscribe((response) => {
+      this.dataSource = new MatTableDataSource(response.slice(0,this.totalData))
     });
   }
-
-  applyFilter(event: Event): void {
-    const filter = (event.target as HTMLInputElement).value.trim().toLocaleLowerCase();
-    this.dataSource.filter = filter;
-  } 
+  
+  applyFilter(event?: Event): void {
+    const filter = (event?.target as HTMLInputElement).value.trim();
+    if(filter) {
+      this.jsonArray$.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        map((obj: PhotoData[]) => 
+            obj.filter(object => object.id.toString().trim() === filter || object.text.trim().includes(filter)))
+      ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData)))
+    } else {
+      this.getData()
+    }
+  }
 }

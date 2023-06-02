@@ -4,7 +4,9 @@ import { loremIpsum } from "lorem-ipsum";
 import { Observable, concatMap, map, mergeMap, of, range, take, tap, toArray } from "rxjs";
 import { PhotoData } from "src/app/models/photo.model";
 
-@Injectable()
+@Injectable({
+    providedIn: 'root'
+  })
 export class DataService {
     private url = 'https://picsum.photos/id'
     private currentData = 20;
@@ -25,7 +27,7 @@ export class DataService {
         return `${this.url}/${id}/500/500.jpg`;
     }
 
-    private generateRandomObject(): any {
+    generateRandomObject(): any {
         const id = this.generateUniqueId();
         const photo = this.generateRandomPhotoUrl(id);
         const text = loremIpsum({ count: 1, units: 'paragraphs' });
