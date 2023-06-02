@@ -31,16 +31,7 @@ export class CTableComponent implements OnInit, OnDestroy {
   }
   
   ngAfterViewInit() {
-    fromEvent(window, 'scroll')
-    .pipe(
-      takeUntil(this.destroy$),
-      debounceTime(200),
-      distinctUntilChanged(),
-    )
-    .subscribe(() => {
-      this.totalData += 5;
-      this.filterAndPaginate();
-    });
+    this.filterAndPaginate();
   }
 
 
@@ -48,6 +39,8 @@ export class CTableComponent implements OnInit, OnDestroy {
     fromEvent(window, 'scroll')
     .pipe(
       takeUntil(this.destroy$),
+      debounceTime(200),
+      distinctUntilChanged(),
       filter(() => {
         const windowHeight = window.innerHeight;
         const documentHeight = document.documentElement.scrollHeight;
@@ -55,6 +48,7 @@ export class CTableComponent implements OnInit, OnDestroy {
         const scrollPosition = windowHeight + scrollTop;
         return scrollPosition >= documentHeight;
       }),
+      tap(() => this.totalData += 10),
       switchMap(() => this.jsonArray$)
     )
     .subscribe((response) => {

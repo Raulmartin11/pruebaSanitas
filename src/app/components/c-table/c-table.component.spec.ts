@@ -15,7 +15,17 @@ describe('CTableComponent', () => {
 
   const mockData: PhotoData[] = [
     { id: 1, photo: "https://picsum.photos/id/1/500/500.jpg", text: "Lorem ipsum dolor sit amet" },
-    { id: 2, photo: "https://picsum.photos/id/2/500/500.jpg", text: "consectetur adipiscing elit" }
+    { id: 2, photo: "https://picsum.photos/id/2/500/500.jpg", text: "consectetur adipiscing elit" },
+    { id: 3, photo: "https://picsum.photos/id/3/500/500.jpg", text: "Ipsum cillum culpa sit amet" },
+    { id: 4, photo: "https://picsum.photos/id/4/500/500.jpg", text: "proident exercitation veniam anim" },
+    { id: 5, photo: "https://picsum.photos/id/5/500/500.jpg", text: "officia irure anim enim" },
+    { id: 6, photo: "https://picsum.photos/id/6/500/500.jpg", text: "fugiat proident do duis consectetur" },
+    { id: 7, photo: "https://picsum.photos/id/7/500/500.jpg", text: "Nostrud qui sit amet" },
+    { id: 8, photo: "https://picsum.photos/id/8/500/500.jpg", text: "Lorem laboris ex elit" },
+    { id: 9, photo: "https://picsum.photos/id/9/500/500.jpg", text: "Officia exercitation veniam" },
+    { id: 10, photo: "https://picsum.photos/id/10/500/500.jpg", text: "Officia sit ex fugiat" },
+    { id: 11, photo: "https://picsum.photos/id/11/500/500.jpg", text: "culpa sint adipisicing laborum" },
+    { id: 12, photo: "https://picsum.photos/id/12/500/500.jpg", text: "Lorem adipisicing elit et" },
   ];
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -55,38 +65,25 @@ describe('CTableComponent', () => {
     expect(component.dataSource.data.length).toBeGreaterThan(0);
   });
 
-  it("test_scroll_and_filter", fakeAsync(() => {
-    const spyFilter = spyOn(component, 'filterAndPaginate');
-    const scrollEvent = new Event('scroll');
-
-    window.dispatchEvent(scrollEvent);
-    tick(200);
-
-
-    expect(spyFilter).toHaveBeenCalled();
-    expect(component.totalData).toBe(25);
-  }))
-
-  it("test_mat_table_data_source", () => {
+  it("test_mat_table_data_source", fakeAsync(() => {
 
     component.jsonArray$ = of(mockData);
-    component.filterAndPaginate();
     const scrollEvent = new Event('scroll');
     window.dispatchEvent(scrollEvent);
-
+    tick(200);
+    expect(component.totalData).toBe(30);
     expect(component.dataSource.data.length).toBe(mockData.length);
-  });
+  }));
 
-  it("test_total_data_greater_than_response", () => {
+  it("test_total_data_greater_than_response", fakeAsync(() => {
     component.jsonArray$ = of(mockData);
     component.totalData = 1;
 
-    component.filterAndPaginate();
     const scrollEvent = new Event('scroll');
     window.dispatchEvent(scrollEvent);
-
-    expect(component.dataSource.data.length).toBe(1);
-  });
+    tick(200);
+    expect(component.dataSource.data.length).toBe(11);
+  }));
 
   it("test_empty_filter", () => {
     spyOn(dataService, 'getData').and.returnValue(of(mockData));
@@ -113,18 +110,18 @@ describe('CTableComponent', () => {
     spyOn(dataService, 'getData').and.returnValue(of(mockData));
 
     component.ngOnInit();
-    const filterEvent = { target: { value: 'consectetur' } } as unknown as Event;
+    const filterEvent = { target: { value: 'Nostrud' } } as unknown as Event;
     component.applyFilter(filterEvent);
 
     expect(component.dataSource.data.length).toBe(1);
-    expect(component.dataSource.data[0].id).toBe(2);
+    expect(component.dataSource.data[0].id).toBe(7);
   });
 
   it("test_filter_with_non_existent_id", () => {
     spyOn(dataService, 'getData').and.returnValue(of(mockData));
 
     component.ngOnInit();
-    const filterEvent = { target: { value: '12' } } as unknown as Event;
+    const filterEvent = { target: { value: '111' } } as unknown as Event;
     component.applyFilter(filterEvent);
 
     expect(component.dataSource.data.length).toBe(0);
