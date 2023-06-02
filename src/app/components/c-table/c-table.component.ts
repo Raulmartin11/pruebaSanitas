@@ -27,7 +27,7 @@ export class CTableComponent implements OnInit {
     this.jsonArray$.subscribe((response: PhotoData[]) => {
       this.dataSource = new MatTableDataSource(response.slice(0,this.totalData))
       this.displayedColumns = Object.keys(response[0])
-    })
+    }).unsubscribe()
   }
   
   ngAfterViewInit() {
@@ -68,9 +68,10 @@ export class CTableComponent implements OnInit {
         distinctUntilChanged(),
         map((obj: PhotoData[]) => 
             obj.filter(object => object.id.toString().trim() === filter || object.text.trim().includes(filter)))
-      ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData)))
+      ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData))).unsubscribe()
     } else {
       this.getData()
     }
   }
+  
 }

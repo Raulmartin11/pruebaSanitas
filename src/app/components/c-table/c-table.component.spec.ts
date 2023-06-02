@@ -74,7 +74,7 @@ describe('CTableComponent', () => {
     const scrollEvent = new Event('scroll');
     window.dispatchEvent(scrollEvent);
 
-    expect(component.dataSource.data.length).toBe(2);
+    expect(component.dataSource.data.length).toBe(mockData.length);
   });
 
   it("test_total_data_greater_than_response", () => {

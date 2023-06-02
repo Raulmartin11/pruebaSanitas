@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { loremIpsum } from "lorem-ipsum";
-import { Observable, concatMap, map, mergeMap, of, range, take, tap, toArray } from "rxjs";
+import { Observable } from "rxjs";
 import { PhotoData } from "src/app/models/photo.model";
 
 @Injectable({
@@ -9,9 +9,7 @@ import { PhotoData } from "src/app/models/photo.model";
   })
 export class DataService {
     private url = 'https://picsum.photos/id'
-    private currentData = 20;
     private currentID = 1
-    private jsonData: PhotoData[] = [];
     constructor(private http: HttpClient) {}
 
     getData(): Observable<PhotoData[]> {
