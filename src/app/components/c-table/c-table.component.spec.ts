@@ -20,7 +20,7 @@ describe('CTableComponent', () => {
     { id: 4, photo: "https://picsum.photos/id/4/500/500.jpg", text: "proident exercitation veniam anim" },
     { id: 5, photo: "https://picsum.photos/id/5/500/500.jpg", text: "officia irure anim enim" },
     { id: 6, photo: "https://picsum.photos/id/6/500/500.jpg", text: "fugiat proident do duis consectetur" },
-    { id: 7, photo: "https://picsum.photos/id/7/500/500.jpg", text: "Nostrud qui sit amet" },
+    { id: 7, photo: "https://picsum.photos/id/7/500/500.jpg", text: "test de prueba" },
     { id: 8, photo: "https://picsum.photos/id/8/500/500.jpg", text: "Lorem laboris ex elit" },
     { id: 9, photo: "https://picsum.photos/id/9/500/500.jpg", text: "Officia exercitation veniam" },
     { id: 10, photo: "https://picsum.photos/id/10/500/500.jpg", text: "Officia sit ex fugiat" },
@@ -110,7 +110,7 @@ describe('CTableComponent', () => {
     spyOn(dataService, 'getData').and.returnValue(of(mockData));
 
     component.ngOnInit();
-    const filterEvent = { target: { value: 'Nostrud' } } as unknown as Event;
+    const filterEvent = { target: { value: 'test de prueba' } } as unknown as Event;
     component.applyFilter(filterEvent);
 
     expect(component.dataSource.data.length).toBe(1);
