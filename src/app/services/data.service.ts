@@ -3,12 +3,12 @@ import { Injectable } from "@angular/core";
 import { loremIpsum } from "lorem-ipsum";
 import { Observable } from "rxjs";
 import { PhotoData } from "src/app/models/photo.model";
+import { URL_PHOTO } from "../shared/constants";
 
 @Injectable({
     providedIn: 'root'
   })
 export class DataService {
-    private url = 'https://picsum.photos/id'
     private currentID = 1
     constructor(private http: HttpClient) {}
 
@@ -17,12 +17,12 @@ export class DataService {
     }
 
 
-    private generateUniqueId() {
+    private generateUniqueId(): number {
         return this.currentID++;
     }
 
-    private generateRandomPhotoUrl(id: number) {
-        return `${this.url}/${id}/500/500.jpg`;
+    private generateRandomPhotoUrl(id: number): string {
+        return `${URL_PHOTO}/${id}/500/500.jpg`;
     }
 
     private generateRandomObject(): PhotoData {

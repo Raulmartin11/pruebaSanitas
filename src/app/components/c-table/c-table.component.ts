@@ -15,6 +15,7 @@ export class CTableComponent implements OnInit, OnDestroy {
   displayedColumns!: string[];
   totalData = 20;
   destroy$ = new Subject<void>();
+  filter: string = '';
 
   constructor(private dataService: DataService) {}
 
@@ -35,7 +36,7 @@ export class CTableComponent implements OnInit, OnDestroy {
   }
 
 
-  filterAndPaginate() {
+  filterAndPaginate(): void {
     fromEvent(window, 'scroll')
     .pipe(
       takeUntil(this.destroy$),
@@ -52,23 +53,23 @@ export class CTableComponent implements OnInit, OnDestroy {
       switchMap(() => this.jsonArray$)
     )
     .subscribe((response) => {
-      this.dataSource = new MatTableDataSource(response.slice(0,this.totalData))
+      this.filter ? this.filterObservable() : this.dataSource = new MatTableDataSource(response.slice(0, this.totalData));
     });
   }
   
   applyFilter(event?: Event): void {
-    const filter = (event?.target as HTMLInputElement).value.trim();
-    if(filter) {
-      this.jsonArray$.pipe(
-        takeUntil(this.destroy$),
-        debounceTime(300),
-        distinctUntilChanged(),
-        map((obj: PhotoData[]) => 
-            obj.filter(object => object.id.toString().trim() === filter || object.text.trim().includes(filter)))
-      ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData)))
-    } else {
-      this.getData()
-    }
+    this.filter = (event?.target as HTMLInputElement).value.trim();
+    this.filter ? this.filterObservable() : this.getData();
+  }
+
+  private filterObservable() {
+    this.jsonArray$.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(300),
+      distinctUntilChanged(),
+      map((obj: PhotoData[]) => 
+          obj.filter(object => object.id.toString().trim() === this.filter || object.text.trim().includes(this.filter)))
+    ).subscribe((response: PhotoData[]) => this.dataSource = new MatTableDataSource(response.slice(0, this.totalData)))
   }
   
   ngOnDestroy(): void {

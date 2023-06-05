@@ -1,21 +1,23 @@
-.c-table__container--table {
-  width: 100%;
-}
-
-.c-table__container--form--field {
-  font-size: 14px;
-  width: 100%;
-}
-
-.c-table__container--table--label--container--img {
-  width: 250px;
-  margin: 20px;
-}
-
-.c-table__container--table--container {
-  width: 100%;
-}
-
-.c-table__container--table--label--title {
-  font-weight: bold;
+.c-table {
+  &__container {
+    &-table {
+      width: 100%;
+      &-label {
+        &-title {
+          font-weight: bold;
+        }
+        &-container {
+          width: 100%;
+          &-img {
+            width: 250px;
+            margin: 20px;
+          }
+        }
+      }
+    }
+    &-form-field {
+      font-size: 14px;
+      width: 100%;
+    }
+  }
 }
